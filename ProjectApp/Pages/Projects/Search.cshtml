@@ -1,0 +1,85 @@
+﻿@page
+@model ProjectApp.Pages.Projects.SearchModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search</h1>
+
+<form method="get" class="form-inline mb-3">
+    <div class="form-group">
+        <input type="text" name="SearchString" value="@Model.SearchString" class="form-control" placeholder="Search by project name..." />
+        <button type="submit" class="btn btn-primary ml-2">Search</button>
+    </div>
+</form>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].WorkerCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].WorkerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].PM)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Project) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkerCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WorkerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PM.Email)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
