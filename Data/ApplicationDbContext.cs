@@ -15,5 +15,6 @@ namespace ProjectApp.Data
         public DbSet<ProjectApp.Models.ProjectWorker> ProjectWorker { get; set; } = default!;
         public DbSet<ProjectApp.Models.Project> Project { get; set; } = default!;
         public DbSet<ProjectApp.Models.Activity> Activity { get; set; } = default!;
+        public DbSet<ProjectApp.Models.SignInLog> SignInLog { get; set; } = default!;
     }
 }

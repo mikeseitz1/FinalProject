@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectApp.Data;
+using ProjectApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews(); // Add this line if not present
+
+// Add sign-in tracking services
+builder.Services.AddScoped<SignInTrackingService>();
+builder.Services.AddScoped<SignInEventHandler>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -31,6 +37,25 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add middleware to track sign-ins
+app.Use(async (context, next) =>
+{
+    await next();
+    
+    // Check if user just signed in
+    if (context.User.Identity?.IsAuthenticated == true && 
+        context.Request.Path.StartsWithSegments("/Identity/Account/Login") && 
+        context.Request.Method == "POST")
+    {
+        var signInEventHandler = context.RequestServices.GetRequiredService<SignInEventHandler>();
+        var email = context.User.Identity.Name;
+        if (!string.IsNullOrEmpty(email))
+        {
+            await signInEventHandler.HandleSignInAsync(email);
+        }
+    }
+});
 
 app.MapStaticAssets();
 app.MapRazorPages()
