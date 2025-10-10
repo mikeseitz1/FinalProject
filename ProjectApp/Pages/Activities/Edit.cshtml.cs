@@ -23,6 +23,8 @@ namespace ProjectApp.Pages.Activities
         [BindProperty]
         public Activity Activity { get; set; } = default!;
 
+        public User? AssignedUser { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -30,31 +32,47 @@ namespace ProjectApp.Pages.Activities
                 return NotFound();
             }
 
-            var activity =  await _context.Activity.FirstOrDefaultAsync(m => m.Id == id);
+            var activity =  await _context.Activity
+                .Include(a => a.AssignedTo) // Eagerly load the assigned worker
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (activity == null)
             {
                 return NotFound();
             }
             Activity = activity;
-           ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-            ViewData["AssignedToId"] = new SelectList(_context.Worker, "Id", "FullName");
 
+            if (activity.AssignedTo != null)
+            {
+                // If a user is assigned, set the AssignedUser property for the dropdown
+                AssignedUser = new User { 
+                    Id = activity.AssignedTo.Id, 
+                    FirstName = activity.AssignedTo.FirstName, 
+                    LastName = activity.AssignedTo.LastName 
+                };
+            }
+            
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-                ViewData["AssignedToId"] = new SelectList(_context.Worker, "Id", "FullName");
-
                 return Page();
             }
 
-            _context.Attach(Activity).State = EntityState.Modified;
+            // Find the original activity from the database
+            var activityToUpdate = await _context.Activity.FindAsync(Activity.Id);
+
+            if (activityToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            // Update only the properties that can be changed from the form
+            activityToUpdate.Title = Activity.Title;
+            activityToUpdate.AssignedToId = Activity.AssignedToId; // This should now work
 
             try
             {
@@ -78,6 +96,16 @@ namespace ProjectApp.Pages.Activities
         private bool ActivityExists(int id)
         {
             return _context.Activity.Any(e => e.Id == id);
+        }
+
+        public async Task<JsonResult> OnGetUsers(string term)
+        {
+            var users = await _context.Worker
+                .Where(u => string.IsNullOrEmpty(term) || (u.FirstName + " " + u.LastName).Contains(term))
+                .Select(u => new { id = u.Id, text = u.FirstName + " " + u.LastName })
+                .ToListAsync();
+
+            return new JsonResult(users);
         }
     }
 }

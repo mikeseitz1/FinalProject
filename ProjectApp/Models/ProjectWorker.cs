@@ -1,4 +1,6 @@
-﻿namespace ProjectApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProjectApp.Models
 {
     public class ProjectWorker
     {

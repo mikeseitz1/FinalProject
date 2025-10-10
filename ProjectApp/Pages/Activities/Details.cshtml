@@ -18,22 +18,10 @@
             @Html.DisplayFor(model => model.Activity.Title)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Activity.Description)
+            @Html.DisplayNameFor(model => model.Activity.AssignedTo)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Activity.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Activity.Project)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Activity.Project.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Activity.AssignedToId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Activity.AssignedToId)
+            @(Model.Activity.AssignedTo?.Email ?? "Not assigned")
         </dd>
     </dl>
 </div>

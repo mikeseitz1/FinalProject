@@ -36,8 +36,8 @@ namespace ProjectApp.Pages.Comments
                 return NotFound();
             }
             Comment = comment;
+           ViewData["AuthorId"] = new SelectList(_context.Worker, "Id", "Email");
            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-           ViewData["AuthorId"] = new SelectList(_context.Worker, "Id", "FullName");
             return Page();
         }
 
@@ -47,8 +47,6 @@ namespace ProjectApp.Pages.Comments
         {
             if (!ModelState.IsValid)
             {
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-                ViewData["AuthorId"] = new SelectList(_context.Worker, "Id", "FullName");
                 return Page();
             }
 

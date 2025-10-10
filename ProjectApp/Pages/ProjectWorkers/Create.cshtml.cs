@@ -32,11 +32,8 @@ namespace ProjectApp.Pages.ProjectWorkers
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-                ViewData["WorkerId"] = new SelectList(_context.Worker, "Id", "Email");
-
                 return Page();
             }
 

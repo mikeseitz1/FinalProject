@@ -14,16 +14,17 @@ namespace ProjectApp.Pages.Comments
     {
         private readonly ProjectApp.Data.ApplicationDbContext _context;
 
-        public CreateModel(ProjectApp.Data.ApplicationDbContext context) => _context = context;
+        public CreateModel(ProjectApp.Data.ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult OnGet()
-        
-            {
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-                ViewData["AuthorId"] = new SelectList(_context.Worker, "Id", "FullName");
-                return Page();
-            }
-        
+        {
+        ViewData["AuthorId"] = new SelectList(_context.Worker, "Id", "Email");
+        ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            return Page();
+        }
 
         [BindProperty]
         public Comment Comment { get; set; } = default!;
@@ -31,10 +32,8 @@ namespace ProjectApp.Pages.Comments
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-                ViewData["AuthorId"] = new SelectList(_context.Worker, "Id", "FullName");
                 return Page();
             }
 

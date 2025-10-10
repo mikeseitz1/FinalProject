@@ -21,24 +21,20 @@ namespace ProjectApp.Pages.Activities
 
         public IActionResult OnGet()
         {
-        ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-            ViewData["AssignedToId"] = new SelectList(_context.Worker, "Id", "FullName");
-
+            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            ViewData["WorkerId"] = new SelectList(_context.Worker, "Id", "Email");
             return Page();
         }
 
         [BindProperty]
-        public Activity Activity { get; set; } = default!;
+        public Activity Activity { get; set; }
+        
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
+        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+          if (!ModelState.IsValid)
             {
-                ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-                ViewData["AssignedToId"] = new SelectList(_context.Worker, "Id", "FullName");
-
-
                 return Page();
             }
 

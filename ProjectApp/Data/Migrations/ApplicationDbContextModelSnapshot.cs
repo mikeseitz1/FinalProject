@@ -232,15 +232,12 @@ namespace ProjectApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AssignedTo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AssignedToId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("AssignedToEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("AssignedToId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -249,9 +246,12 @@ namespace ProjectApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WorkerId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedTo");
+                    b.HasIndex("AssignedToId");
 
                     b.HasIndex("ProjectId");
 
@@ -354,6 +354,32 @@ namespace ProjectApp.Data.Migrations
                     b.ToTable("ProjectWorker");
                 });
 
+            modelBuilder.Entity("ProjectApp.Models.SignInLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SignInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SignInLog");
+                });
+
             modelBuilder.Entity("ProjectApp.Models.Worker", b =>
                 {
                     b.Property<int>("Id")
@@ -436,9 +462,9 @@ namespace ProjectApp.Data.Migrations
 
             modelBuilder.Entity("ProjectApp.Models.Activity", b =>
                 {
-                    b.HasOne("ProjectApp.Models.Worker", "Worker")
+                    b.HasOne("ProjectApp.Models.Worker", "AssignedTo")
                         .WithMany("Activities")
-                        .HasForeignKey("AssignedTo");
+                        .HasForeignKey("AssignedToId");
 
                     b.HasOne("ProjectApp.Models.Project", "Project")
                         .WithMany("Activities")
@@ -446,14 +472,14 @@ namespace ProjectApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Project");
+                    b.Navigation("AssignedTo");
 
-                    b.Navigation("Worker");
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("ProjectApp.Models.Comment", b =>
                 {
-                    b.HasOne("ProjectApp.Models.Worker", "Worker")
+                    b.HasOne("ProjectApp.Models.Worker", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -465,9 +491,9 @@ namespace ProjectApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Project");
+                    b.Navigation("Author");
 
-                    b.Navigation("Worker");
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("ProjectApp.Models.Project", b =>

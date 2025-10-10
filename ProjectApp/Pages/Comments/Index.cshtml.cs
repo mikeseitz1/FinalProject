@@ -24,8 +24,8 @@ namespace ProjectApp.Pages.Comments
         public async Task OnGetAsync()
         {
             Comment = await _context.Comment
-                .Include(c => c.Project)
-                .Include(c => c.Worker).ToListAsync();
+                .Include(c => c.Author)
+                .Include(c => c.Project).ToListAsync();
         }
     }
 }

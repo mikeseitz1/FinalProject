@@ -28,7 +28,9 @@ namespace ProjectApp.Pages.Activities
                 return NotFound();
             }
 
-            var activity = await _context.Activity.FirstOrDefaultAsync(m => m.Id == id);
+            var activity = await _context.Activity
+                .Include(a => a.AssignedTo)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (activity is not null)
             {
